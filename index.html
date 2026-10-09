@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wavex Payments | Gateway de pagamentos Pix, cartão e boleto</title>
+  <meta name="description" content="Pix, cartão e boleto em uma integração, com checkout, antifraude, painel em tempo real e saque via Pix. Infraestrutura para operações digitais.">
+  <meta name="theme-color" content="#070707">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Wavex Payments">
+  <meta property="og:title" content="Wavex Payments | Gateway de pagamentos Pix, cartão e boleto">
+  <meta property="og:description" content="Pix, cartão e boleto em uma integração, com checkout, antifraude, painel em tempo real e saque via Pix.">
+  <!-- TROCAR: depois de publicar, use a URL absoluta (https://seudominio/assets/og.jpg) — WhatsApp e Instagram não leem caminho relativo -->
+  <meta property="og:image" content="assets/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+<!-- ícones (Lucide, ISC) + marca Wavex + Pix/WhatsApp (Simple Icons, CC0) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></symbol>
+    <symbol id="i-barcode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5v14"/><path d="M8 5v14"/><path d="M12 5v14"/><path d="M17 5v14"/><path d="M21 5v14"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
+    <symbol id="i-grad" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol>
+    <symbol id="i-pill" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/><path d="m7.5 4.27 9 5.15"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/></symbol>
+    <symbol id="i-trending" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/></symbol>
+    <symbol id="i-landmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="m12 2 8 5H4z"/></symbol>
+    <symbol id="i-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></symbol>
+    <symbol id="i-youtube" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></symbol>
+    <symbol id="i-pix" viewBox="0 0 24 24" fill="currentColor"><path d="M5.283 18.36a3.505 3.505 0 0 0 2.493-1.032l3.6-3.6a.684.684 0 0 1 .946 0l3.613 3.613a3.504 3.504 0 0 0 2.493 1.032h.71l-4.56 4.56a3.647 3.647 0 0 1-5.156 0L4.85 18.36ZM18.428 5.627a3.505 3.505 0 0 0-2.493 1.032l-3.613 3.614a.67.67 0 0 1-.946 0l-3.6-3.6A3.505 3.505 0 0 0 5.283 5.64h-.434l4.573-4.572a3.646 3.646 0 0 1 5.156 0l4.559 4.559ZM1.068 9.422 3.79 6.699h1.492a2.483 2.483 0 0 1 1.744.722l3.6 3.6a1.73 1.73 0 0 0 2.443 0l3.614-3.613a2.482 2.482 0 0 1 1.744-.723h1.767l2.737 2.737a3.646 3.646 0 0 1 0 5.156l-2.736 2.736h-1.768a2.482 2.482 0 0 1-1.744-.722l-3.613-3.613a1.77 1.77 0 0 0-2.444 0l-3.6 3.6a2.483 2.483 0 0 1-1.744.722H3.791l-2.723-2.723a3.646 3.646 0 0 1 0-5.156"/></symbol>
+    <symbol id="i-whatsapp" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></symbol>
+    <symbol id="i-wavex" viewBox="140 465 1645 1025" fill="currentColor"><path d="M144 471h289l214 367-163 240zM688 471h289l224 373-437 642-128-211 267-431zM1264 471h288l227 373-453 640-127-212 278-428z"/></symbol>
+  </defs>
+</svg>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="#topo" aria-label="Wavex Payments — início">
+      <img src="assets/logo-wavex.png" alt="Wavex Payments" width="172" height="26">
+    </a>
+
+    <nav class="site-nav" id="site-nav" aria-label="Principal">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <button class="nav-link" type="button" aria-expanded="false" aria-controls="menu-produto">Produto <svg class="i i-sm"><use href="#i-chevron-down"/></svg></button>
+          <div class="nav-menu" id="menu-produto">
+            <a href="#metodos" data-tab="tab-pix"><svg class="i"><use href="#i-pix"/></svg><span><strong>Pix</strong><small>Confirmação em tempo real</small></span></a>
+            <a href="#metodos" data-tab="tab-cartao"><svg class="i"><use href="#i-card"/></svg><span><strong>Cartão de crédito</strong><small>Parcelamento e análise de risco</small></span></a>
+            <a href="#metodos" data-tab="tab-boleto"><svg class="i"><use href="#i-barcode"/></svg><span><strong>Boleto</strong><small>Status atualizado na compensação</small></span></a>
+            <a href="#checkout"><svg class="i"><use href="#i-dashboard"/></svg><span><strong>Checkout e painel</strong><small>A compra e a operação conectadas</small></span></a>
+            <a href="#app"><svg class="i"><use href="#i-smartphone"/></svg><span><strong>App Wavex</strong><small>Sua operação no celular</small></span></a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" type="button" aria-expanded="false" aria-controls="menu-solucoes">Soluções <svg class="i i-sm"><use href="#i-chevron-down"/></svg></button>
+          <div class="nav-menu" id="menu-solucoes">
+            <a href="#segmentos" data-seg="0"><svg class="i"><use href="#i-grad"/></svg><span><strong>Infoprodutos</strong><small>Cursos, mentorias e comunidades</small></span></a>
+            <a href="#segmentos" data-seg="1"><svg class="i"><use href="#i-cart"/></svg><span><strong>E-commerce</strong><small>Lojas virtuais e marcas próprias</small></span></a>
+            <a href="#segmentos" data-seg="2"><svg class="i"><use href="#i-pill"/></svg><span><strong>Nutracêuticos</strong><small>Suplementos e marcas de bem-estar</small></span></a>
+            <a href="#segmentos" data-seg="3"><svg class="i"><use href="#i-repeat"/></svg><span><strong>Assinaturas</strong><small>Clubes, SaaS e conteúdo recorrente</small></span></a>
+            <a href="#segmentos" data-seg="4"><svg class="i"><use href="#i-package"/></svg><span><strong>Dropshipping</strong><small>Lojas com estoque no fornecedor</small></span></a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" type="button" aria-expanded="false" aria-controls="menu-empresa">Empresa <svg class="i i-sm"><use href="#i-chevron-down"/></svg></button>
+          <div class="nav-menu" id="menu-empresa">
+            <a href="#sobre"><svg class="i"><use href="#i-wavex"/></svg><span><strong>Sobre a Wavex</strong><small>Infraestrutura para escalar</small></span></a>
+            <a href="#como-funciona"><svg class="i"><use href="#i-activity"/></svg><span><strong>Como funciona</strong><small>Integre. Opere. Escale.</small></span></a>
+            <a href="#saques"><svg class="i"><use href="#i-wallet"/></svg><span><strong>Saldo e saque</strong><small>Da venda ao Pix na sua conta</small></span></a>
+            <a href="#integracoes"><svg class="i"><use href="#i-code"/></svg><span><strong>Integrações</strong><small>API, webhooks e plataformas</small></span></a>
+            <a href="#faq"><svg class="i"><use href="#i-file"/></svg><span><strong>Perguntas frequentes</strong><small>Tudo sobre a Wavex</small></span></a>
+          </div>
+        </li>
+      </ul>
+      <div class="nav-mobile-cta"><a class="btn btn-primary" href="#contato">Escalar com a Wavex <svg class="i"><use href="#i-arrow-right"/></svg></a></div>
+    </nav>
+
+    <div class="header-actions">
+      <a class="btn btn-primary btn-sm header-cta" href="#contato">Escalar com a Wavex <svg class="i"><use href="#i-arrow-right"/></svg></a>
+      <a class="icon-btn" data-link="painel" href="#" aria-label="Entrar no painel"><svg class="i"><use href="#i-user"/></svg></a>
+      <button class="icon-btn menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Abrir menu"><svg class="i"><use href="#i-menu"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main id="conteudo">
+
+  <!-- HERO -->
+  <section class="hero" id="topo">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <canvas class="hero-particles" aria-hidden="true"></canvas>
+    <div class="container hero-inner">
+      <p class="hero-eyebrow" data-reveal>Infraestrutura de pagamentos para operações digitais</p>
+      <h1 class="hero-title" data-reveal style="--d:1">
+        <span class="hero-fixed">Wavex para quem</span>
+        <span class="rotator" data-rotator>
+          <span class="rot-item is-active"><span class="u">vende no digital</span></span>
+          <span class="rot-item" aria-hidden="true"><span class="u">recebe no Pix</span></span>
+          <span class="rot-item" aria-hidden="true"><span class="u">vende parcelado</span></span>
+          <span class="rot-item" aria-hidden="true"><span class="u">exige controle</span></span>
+          <span class="rot-item" aria-hidden="true"><span class="u">quer escalar</span></span>
+        </span>
+      </h1>
+      <div class="hero-sub" data-reveal style="--d:2">
+        <p class="rot-sub is-active">Pix, cartão e boleto em uma integração, com checkout, painel e saque.</p>
+        <p class="rot-sub" aria-hidden="true">Pix 24/7 com confirmação no painel em tempo real e saque via Pix.</p>
+        <p class="rot-sub" aria-hidden="true">Cartão de crédito com parcelamento e antifraude no fluxo da compra.</p>
+        <p class="rot-sub" aria-hidden="true">Transações, liquidação e pedidos em um só painel, em tempo real.</p>
+        <p class="rot-sub" aria-hidden="true">API REST e webhooks para integrar uma vez e crescer sem trocar de base.</p>
+      </div>
+      <div class="hero-dots" data-reveal style="--d:2">
+        <button type="button" aria-label="Frase 1" aria-current="true"></button>
+        <button type="button" aria-label="Frase 2" aria-current="false"></button>
+        <button type="button" aria-label="Frase 3" aria-current="false"></button>
+        <button type="button" aria-label="Frase 4" aria-current="false"></button>
+        <button type="button" aria-label="Frase 5" aria-current="false"></button>
+      </div>
+      <dl class="hero-stats" data-reveal style="--d:3">
+        <div><dt>Métodos de pagamento</dt><dd>3</dd></div>
+        <div><dt>Integração via API</dt><dd>1</dd></div>
+        <div><dt>Recebimento via Pix</dt><dd>24/7</dd></div>
+      </dl>
+      <div class="hero-ctas" data-reveal style="--d:4">
+        <a class="btn btn-primary" href="#contato">Escalar com a Wavex <svg class="i"><use href="#i-arrow-right"/></svg></a>
+        <a class="btn btn-ghost" href="#como-funciona">Ver como funciona</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NÚMEROS -->
+  <section class="proof" id="numeros" aria-label="Por trás de cada venda">
+    <div class="container proof-grid">
+      <p class="label">Por trás de cada venda</p>
+      <dl class="proof-stats">
+        <div><dt>Métodos no mesmo checkout</dt><dd>3</dd></div>
+        <div><dt>API REST com webhooks</dt><dd>1</dd></div>
+        <div><dt>Painel em tempo real</dt><dd>1</dd></div>
+        <div><dt>Pix, inclusive fim de semana</dt><dd>24/7</dd></div>
+      </dl>
+    </div>
+    <div class="marquee" style="--speed:50s">
+      <div class="marquee-track">
+        <ul class="badges">
+          <li>Checkout Wavex</li><li>API REST</li><li>Webhooks</li><li>Antifraude</li><li>KYC no cadastro</li>
+          <li>Parcelamento no cartão</li><li>Conciliação</li><li>Saque via Pix</li><li>App Wavex</li><li>Dados conforme a LGPD</li>
+        </ul>
+        <ul class="badges" aria-hidden="true">
+          <li>Checkout Wavex</li><li>API REST</li><li>Webhooks</li><li>Antifraude</li><li>KYC no cadastro</li>
+          <li>Parcelamento no cartão</li><li>Conciliação</li><li>Saque via Pix</li><li>App Wavex</li><li>Dados conforme a LGPD</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARA QUEM É -->
+  <section class="section" id="segmentos">
+    <div class="container">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Para quem é</p>
+        <h2 class="h2"><span>Modelos diferentes.</span> <span class="hl">A mesma base.</span></h2>
+        <p class="lead">Infoproduto, loja virtual, suplemento, assinatura ou drop: cada modelo vende e recebe de um jeito. A Wavex sustenta todos na mesma base.</p>
+      </header>
+
+      <div class="seg-grid" data-segments data-reveal>
+        <div class="seg-main">
+          <figure class="seg-slide" id="seg-0">
+            <blockquote><p>Em lançamento, a venda acontece em horas. Pix, cartão parcelado e boleto no mesmo checkout, com cada pagamento confirmado no painel em tempo real.</p></blockquote>
+            <figcaption><span class="seg-icon"><svg class="i"><use href="#i-grad"/></svg></span><span><strong>Infoprodutos</strong><small>Cursos, mentorias e comunidades</small></span></figcaption>
+          </figure>
+          <figure class="seg-slide" id="seg-1" hidden>
+            <blockquote><p>Pedido pago precisa sair rápido para separação. Webhooks avisam sua loja a cada mudança de status, e a conciliação fecha venda, pedido e pagamento.</p></blockquote>
+            <figcaption><span class="seg-icon"><svg class="i"><use href="#i-cart"/></svg></span><span><strong>E-commerce</strong><small>Lojas virtuais e marcas próprias</small></span></figcaption>
+          </figure>
+          <figure class="seg-slide" id="seg-2" hidden>
+            <blockquote><p>Venda por anúncio traz volume e também risco. Cartão parcelado com antifraude no fluxo da compra, e Pix para quem quer pagar na hora.</p></blockquote>
+            <figcaption><span class="seg-icon"><svg class="i"><use href="#i-pill"/></svg></span><span><strong>Nutracêuticos</strong><small>Suplementos e marcas de bem-estar</small></span></figcaption>
+          </figure>
+          <figure class="seg-slide" id="seg-3" hidden>
+            <blockquote><p>O acesso depende do pagamento confirmado. Webhooks avisam seu sistema quando a cobrança é paga, e o painel mostra o que está aberto e o que já entrou.</p></blockquote>
+            <figcaption><span class="seg-icon"><svg class="i"><use href="#i-repeat"/></svg></span><span><strong>Assinaturas</strong><small>Clubes, SaaS e conteúdo recorrente</small></span></figcaption>
+          </figure>
+          <figure class="seg-slide" id="seg-4" hidden>
+            <blockquote><p>Margem curta não aceita surpresa. Receita líquida após tarifas no painel e saque via Pix do saldo disponível para pagar o fornecedor.</p></blockquote>
+            <figcaption><span class="seg-icon"><svg class="i"><use href="#i-package"/></svg></span><span><strong>Dropshipping</strong><small>Lojas com estoque no fornecedor</small></span></figcaption>
+          </figure>
+          <div class="seg-controls">
+            <span class="seg-count" aria-live="polite">01 / 05</span>
+            <button class="round-btn seg-prev" type="button" aria-label="Segmento anterior"><svg class="i"><use href="#i-arrow-left"/></svg></button>
+            <button class="round-btn seg-next is-accent" type="button" aria-label="Próximo segmento"><svg class="i"><use href="#i-arrow-right"/></svg></button>
+          </div>
+        </div>
+        <div class="seg-side">
+          <p class="label">Outros modelos</p>
+          <ul class="seg-list">
+            <li><button class="seg-item" type="button" aria-controls="seg-0" aria-current="true"><span class="seg-icon"><svg class="i"><use href="#i-grad"/></svg></span><span><strong>Infoprodutos</strong><small>Cursos, mentorias e comunidades</small></span></button></li>
+            <li><button class="seg-item" type="button" aria-controls="seg-1" aria-current="false"><span class="seg-icon"><svg class="i"><use href="#i-cart"/></svg></span><span><strong>E-commerce</strong><small>Lojas virtuais e marcas próprias</small></span></button></li>
+            <li><button class="seg-item" type="button" aria-controls="seg-2" aria-current="false"><span class="seg-icon"><svg class="i"><use href="#i-pill"/></svg></span><span><strong>Nutracêuticos</strong><small>Suplementos e marcas de bem-estar</small></span></button></li>
+            <li><button class="seg-item" type="button" aria-controls="seg-3" aria-current="false"><span class="seg-icon"><svg class="i"><use href="#i-repeat"/></svg></span><span><strong>Assinaturas</strong><small>Clubes, SaaS e conteúdo recorrente</small></span></button></li>
+            <li><button class="seg-item" type="button" aria-controls="seg-4" aria-current="false"><span class="seg-icon"><svg class="i"><use href="#i-package"/></svg></span><span><strong>Dropshipping</strong><small>Lojas com estoque no fornecedor</small></span></button></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UMA INTEGRAÇÃO, TODOS OS MÉTODOS -->
+  <section class="section" id="plataforma" style="padding-top:0">
+    <div class="container">
+      <div class="platform-card card" data-reveal>
+        <div class="platform-copy">
+          <h2 class="h3"><span>Uma integração.</span> <span class="hl">Pix, cartão e boleto.</span></h2>
+          <p>Conecte a Wavex uma vez e receba pelos três métodos. Checkout, API e saque no mesmo fluxo, sem depender de vários fornecedores.</p>
+          <p class="note">Antifraude na transação e KYC no cadastro: segurança desde a base.</p>
+        </div>
+        <div class="platform-visual">
+          <svg class="network" viewBox="0 0 560 340" role="img" aria-label="Diagrama: Pix, cartão, boleto, checkout, API e saque conectados à Wavex">
+            <defs>
+              <radialGradient id="hub-grad" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#9d7bff"/><stop offset="1" stop-color="#511490"/></radialGradient>
+            </defs>
+            <g>
+              <path class="wire" d="M280 165 Q190 100 98 105"/><path class="pulse" d="M280 165 Q190 100 98 105"/>
+              <path class="wire" d="M280 165 Q240 100 280 45"/><path class="pulse" d="M280 165 Q240 100 280 45" style="animation-delay:-.4s"/>
+              <path class="wire" d="M280 165 Q370 100 462 105"/><path class="pulse" d="M280 165 Q370 100 462 105" style="animation-delay:-.8s"/>
+              <path class="wire" d="M280 165 Q370 230 462 225"/><path class="pulse" d="M280 165 Q370 230 462 225" style="animation-delay:-1.2s"/>
+              <path class="wire" d="M280 165 Q320 230 280 285"/><path class="pulse" d="M280 165 Q320 230 280 285" style="animation-delay:-.6s"/>
+              <path class="wire" d="M280 165 Q190 230 98 225"/><path class="pulse" d="M280 165 Q190 230 98 225" style="animation-delay:-1s"/>
+            </g>
+            <g class="node" transform="translate(98 105)"><circle r="27"/><use href="#i-pix" x="-11" y="-11" width="22" height="22"/><text y="47">Pix</text></g>
+            <g class="node" transform="translate(280 45)"><circle r="27"/><use href="#i-dashboard" x="-11" y="-11" width="22" height="22"/><text y="47">Checkout</text></g>
+            <g class="node" transform="translate(462 105)"><circle r="27"/><use href="#i-card" x="-11" y="-11" width="22" height="22"/><text y="47">Cartão</text></g>
+            <g class="node" transform="translate(462 225)"><circle r="27"/><use href="#i-barcode" x="-11" y="-11" width="22" height="22"/><text y="47">Boleto</text></g>
+            <g class="node" transform="translate(280 285)"><circle r="27"/><use href="#i-wallet" x="-11" y="-11" width="22" height="22"/><text y="47">Saque</text></g>
+            <g class="node" transform="translate(98 225)"><circle r="27"/><use href="#i-code" x="-11" y="-11" width="22" height="22"/><text y="47">API</text></g>
+            <g transform="translate(280 165)">
+              <circle class="hub-ring" r="44"/>
+              <circle r="44" fill="url(#hub-grad)"/>
+              <use href="#i-wavex" x="-22" y="-14" width="44" height="28" style="color:#fff"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MÉTODOS -->
+  <section class="section alt ruled" id="metodos">
+    <div class="container">
+      <header class="section-head center" data-reveal>
+        <p class="eyebrow">Métodos de pagamento</p>
+        <h2 class="h2"><span>Três formas de pagar.</span> <span class="hl">Uma forma de operar.</span></h2>
+        <p class="lead">O cliente escolhe como paga. Você acompanha os três no mesmo painel, com status e conciliação.</p>
+      </header>
+
+      <div class="tabs" role="tablist" aria-label="Métodos de pagamento" data-reveal>
+        <button role="tab" type="button" id="tab-pix" aria-controls="panel-pix" aria-selected="true"><svg class="i"><use href="#i-pix"/></svg>Pix</button>
+        <button role="tab" type="button" id="tab-cartao" aria-controls="panel-cartao" aria-selected="false" tabindex="-1"><svg class="i"><use href="#i-card"/></svg>Cartão de crédito</button>
+        <button role="tab" type="button" id="tab-boleto" aria-controls="panel-boleto" aria-selected="false" tabindex="-1"><svg class="i"><use href="#i-barcode"/></svg>Boleto</button>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-pix" aria-labelledby="tab-pix" tabindex="0">
+        <div class="method-grid">
+          <div class="method-mock" aria-hidden="true">
+            <div class="pay-card">
+              <div class="pay-head"><span class="pay-brand"><svg class="i"><use href="#i-pix"/></svg>Pagamento via Pix</span><span class="swap"><span class="status"><i></i>Aguardando Pix</span><span class="status status--ok"><i></i>Pix confirmado</span></span></div>
+              <p class="pay-amount"><small>Total</small>R$ 197,00</p>
+              <div class="pay-qr"><img src="assets/qr.svg" alt="" width="140" height="140" loading="lazy"></div>
+              <div class="pay-btn"><svg class="i i-sm"><use href="#i-copy"/></svg>Copiar código Pix</div>
+              <p class="pay-foot"><svg class="i i-sm"><use href="#i-scan"/></svg>Escaneie o QR Code no app do seu banco</p>
+            </div>
+          </div>
+          <div class="method-copy">
+            <h3 class="h3">Pix na hora, toda hora.</h3>
+            <p>O cliente paga por QR Code ou Pix copia e cola, e a confirmação aparece no painel em tempo real. Sem esperar compensação, inclusive à noite e no fim de semana.</p>
+            <ul class="ticks"><li>QR Code e Pix copia e cola</li><li>Confirmação em tempo real no painel</li><li>Recebimento 24/7, inclusive feriados</li><li>Webhook a cada Pix confirmado</li></ul>
+            <a class="link-cta" href="#contato">Falar com um especialista <svg class="i"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-cartao" aria-labelledby="tab-cartao" tabindex="0" hidden>
+        <div class="method-grid">
+          <div class="method-mock" aria-hidden="true">
+            <div class="card-mock">
+              <img class="card-art" src="assets/cartao.webp" alt="" width="1080" height="670" loading="lazy">
+              <div class="pay-card">
+                <div class="pay-head"><span class="pay-brand"><svg class="i"><use href="#i-card"/></svg>Cartão de crédito</span><span class="swap"><span class="status"><i></i>Em análise</span><span class="status status--ok"><i></i>Pagamento aprovado</span></span></div>
+                <div class="pay-field"><small>Número do cartão</small><span>•••• •••• •••• 4821</span></div>
+                <div class="pay-row">
+                  <div class="pay-field"><small>Parcelas</small><span>3x de R$ 65,67</span></div>
+                  <div class="pay-field"><small>Total</small><span>R$ 197,00</span></div>
+                </div>
+                <div class="pay-btn">Finalizar pagamento</div>
+                <p class="pay-foot"><svg class="i i-sm"><use href="#i-lock"/></svg>Ambiente protegido por criptografia</p>
+              </div>
+            </div>
+          </div>
+          <div class="method-copy">
+            <h3 class="h3">À vista ou parcelado.</h3>
+            <p>Crédito à vista ou parcelado no mesmo checkout, com antifraude e análise de risco no fluxo da compra. Cada transação aparece no painel com o status atualizado.</p>
+            <ul class="ticks"><li>Parcelamento no checkout</li><li>Antifraude e análise de risco</li><li>Status da transação em tempo real</li><li>Webhook a cada mudança de status</li></ul>
+            <a class="link-cta" href="#contato">Falar com um especialista <svg class="i"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" role="tabpanel" id="panel-boleto" aria-labelledby="tab-boleto" tabindex="0" hidden>
+        <div class="method-grid">
+          <div class="method-mock" aria-hidden="true">
+            <div class="pay-card">
+              <div class="pay-head"><span class="pay-brand"><svg class="i"><use href="#i-barcode"/></svg>Boleto bancário</span><span class="swap"><span class="status"><i></i>Aguardando pagamento</span><span class="status status--ok"><i></i>Boleto compensado</span></span></div>
+              <p class="pay-amount"><small>Total</small>R$ 197,00</p>
+              <div class="barcode"></div>
+              <div class="pay-btn"><svg class="i i-sm"><use href="#i-copy"/></svg>Copiar linha digitável</div>
+              <p class="pay-foot"><svg class="i i-sm"><use href="#i-calendar"/></svg>Compensação conforme o prazo bancário</p>
+            </div>
+          </div>
+          <div class="method-copy">
+            <h3 class="h3">Boleto com controle.</h3>
+            <p>Para quem prefere pagar no boleto. Linha digitável e código de barras no checkout, e o status muda no painel quando o banco confirma a compensação.</p>
+            <ul class="ticks"><li>Linha digitável e código de barras</li><li>Emissão direto no checkout</li><li>Status atualizado na compensação</li><li>Conciliação no mesmo painel</li></ul>
+            <a class="link-cta" href="#contato">Falar com um especialista <svg class="i"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHECKOUT + PAINEL -->
+  <section class="section ruled" id="checkout">
+    <div class="container">
+      <p class="crumbs" data-reveal><strong>Wavex Payments</strong><i></i><strong>Checkout Wavex</strong><span>do clique ao saque</span></p>
+      <h2 class="h2" data-reveal><span>Não é só processar.</span> <span class="hl">É ter estrutura.</span></h2>
+      <p class="lead" data-reveal>O Checkout Wavex conduz a compra. A infraestrutura Wavex sustenta o que vem depois: análise de risco, liquidação, conciliação e saque. Tudo visível no mesmo painel.</p>
+
+      <figure class="showcase" data-reveal>
+        <figcaption class="label">Painel Wavex em operação</figcaption>
+        <img class="showcase-shot" src="assets/dashboard.webp" alt="Painel Wavex aberto em um notebook: visão geral com volume, receita e transações recentes" width="1080" height="790" loading="lazy">
+        <div class="pay-card" aria-hidden="true">
+          <div class="pay-head"><span class="pay-brand"><svg class="i"><use href="#i-pix"/></svg>Pix</span><span class="status status--ok"><i></i>Pago</span></div>
+          <p class="pay-amount"><small>Pedido #10482 · agora</small>R$ 497,00</p>
+        </div>
+      </figure>
+
+      <div class="checkout-cols">
+        <div data-reveal>
+          <h3>Uma integração. Duas camadas.</h3>
+          <div class="layers">
+            <div class="layer">
+              <h4>Checkout Wavex</h4>
+              <p>A camada que o cliente vê na hora de pagar.</p>
+              <ul><li>Pix, cartão e boleto no mesmo fluxo</li><li>Parcelamento no cartão de crédito</li><li>Antifraude no momento da compra</li><li>Status da compra em tempo real</li></ul>
+            </div>
+            <div class="layer">
+              <h4>Infraestrutura Wavex</h4>
+              <p>A base que sustenta cada venda depois do clique.</p>
+              <ul><li>Cadastro com KYC e conta verificada</li><li>API REST e webhooks para integrar</li><li>Conciliação e receita líquida no painel</li><li>Saldo disponível e saque via Pix</li></ul>
+            </div>
+          </div>
+        </div>
+        <div data-reveal style="--d:1">
+          <h3>Do clique ao saldo</h3>
+          <ol class="flow-grid">
+            <li><strong>O cliente paga</strong><small>Pix, cartão ou boleto no checkout</small></li>
+            <li><strong>A Wavex processa</strong><small>análise de risco e confirmação</small></li>
+            <li><strong>O painel registra</strong><small>status, pedido e conciliação</small></li>
+            <li><strong>Você saca</strong><small>saldo disponível via Pix</small></li>
+          </ol>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="#contato">Escalar com a Wavex <svg class="i"><use href="#i-arrow-right"/></svg></a>
+            <a class="btn btn-ghost" href="#como-funciona">Ver o fluxo completo</a>
+          </div>
+        </div>
+      </div>
+      <p class="footnote">Métodos, parcelamento e prazos de liquidação são definidos conforme o perfil da operação e a análise de risco.</p>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section class="steps-section" id="como-funciona" data-steps>
+    <div class="steps-pin">
+      <div class="container steps-grid">
+        <div class="steps-copy">
+          <p class="eyebrow">Como funciona</p>
+          <h2 class="h2"><span>Integre. Opere.</span> <span class="hl">Escale.</span></h2>
+          <p class="lead">Do cadastro à primeira venda em três etapas. Checkout, processamento, painel e saque na mesma base.</p>
+          <ol class="steps">
+            <li class="step is-active"><span class="step-n">01</span><div><h3>Cadastro</h3><p>Dados do negócio, KYC e análise do perfil da operação. A conta fica verificada antes da primeira venda.</p></div></li>
+            <li class="step"><span class="step-n">02</span><div><h3>Integração</h3><p>Checkout Wavex no seu funil ou API REST com webhooks. Pix, cartão e boleto liberados conforme o seu perfil.</p></div></li>
+            <li class="step"><span class="step-n">03</span><div><h3>Operação</h3><p>Vendas, status e conciliação no painel em tempo real. O saldo disponível sai por saque via Pix.</p></div></li>
+          </ol>
+          <a class="link-cta" href="#contato">Quero operar com a Wavex <svg class="i"><use href="#i-arrow-right"/></svg></a>
+        </div>
+
+        <aside class="journey card" aria-label="Jornada da operação">
+          <div class="journey-top label"><span>Jornada da operação</span><span class="live"><i></i>Ao vivo</span></div>
+          <div class="journey-panel">
+            <p class="label">Etapa 01 / 03</p>
+            <h3 class="display">Cadastro</h3>
+            <p>Dados do negócio, KYC e análise do perfil da operação. A conta fica verificada antes da primeira venda.</p>
+            <p class="tags">Cadastro / KYC / análise de perfil</p>
+          </div>
+          <div class="journey-panel" hidden>
+            <p class="label">Etapa 02 / 03</p>
+            <h3 class="display">Integração</h3>
+            <p>Checkout Wavex no seu funil ou API REST com webhooks. Pix, cartão e boleto liberados conforme o seu perfil.</p>
+            <p class="tags">Checkout / API REST / webhooks</p>
+          </div>
+          <div class="journey-panel" hidden>
+            <p class="label">Etapa 03 / 03</p>
+            <h3 class="display">Operação</h3>
+            <p>Vendas, status e conciliação no painel em tempo real. O saldo disponível sai por saque via Pix.</p>
+            <p class="tags">Painel / conciliação / saque via Pix</p>
+          </div>
+          <div class="journey-tabs">
+            <button class="journey-tab is-active" type="button" aria-current="true"><small>01</small>Cadastro</button>
+            <button class="journey-tab" type="button" aria-current="false"><small>02</small>Integração</button>
+            <button class="journey-tab" type="button" aria-current="false"><small>03</small>Operação</button>
+          </div>
+          <div class="journey-bar"><i></i></div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- SALDO E SAQUE -->
+  <section class="section payouts ruled" id="saques">
+    <img class="payouts-art" src="assets/moedas.webp" alt="" width="1080" height="740" loading="lazy">
+    <div class="container">
+      <header class="section-head" data-reveal>
+        <p class="eyebrow">Saldo, liquidação e saque</p>
+        <h2 class="h2"><span>Da venda ao saldo.</span> <span class="hl">Do saldo ao Pix.</span></h2>
+        <p class="lead">Acompanhe volume liquidado, receita líquida após tarifas e saldo disponível no mesmo painel. O saque sai via Pix para a conta cadastrada.</p>
+      </header>
+      <div class="path" data-reveal>
+        <p class="label">Caminho do saldo</p>
+        <ol class="path-nodes">
+          <li><small>Entrada</small><strong>Pix, cartão, boleto</strong></li>
+          <li><small>Painel</small><strong>Saldo disponível</strong></li>
+          <li><small>Saída</small><strong>Saque via Pix</strong></li>
+        </ol>
+      </div>
+      <div class="feature-grid" data-reveal>
+        <article><h3><svg class="i"><use href="#i-pix"/></svg>Saque via Pix</h3><p>O saldo disponível sai por Pix para a conta cadastrada e fica registrado no painel.</p></article>
+        <article><h3><svg class="i"><use href="#i-trending"/></svg>Receita líquida</h3><p>O painel mostra a receita após as tarifas da operação, não só o volume bruto.</p></article>
+        <article><h3><svg class="i"><use href="#i-receipt"/></svg>Conciliação</h3><p>Venda, pedido e pagamento no mesmo registro, para fechar o caixa sem cruzar extratos.</p></article>
+        <article><h3><svg class="i"><use href="#i-clock"/></svg>Ritmo de liquidação</h3><p>Volume liquidado e valores em aberto no painel. Os prazos seguem o perfil da operação.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- APP -->
+  <section class="section alt ruled" id="app">
+    <div class="container app-grid">
+      <figure class="app-visual" data-reveal>
+        <img src="assets/celular.webp" alt="App Wavex no celular: visão geral com volume liquidado, receita líquida, conversão de cobranças e Pix aguardando" width="568" height="1100" loading="lazy">
+        <figcaption>
+          <a class="btn btn-ghost btn-sm" href="#contato">Conhecer o painel</a>
+          <small>Painel operacional Wavex: visão geral no celular</small>
+        </figcaption>
+      </figure>
+      <div class="app-copy" data-reveal style="--d:1">
+        <p class="eyebrow">App Wavex</p>
+        <h2 class="h2"><span>Sua operação merece</span> <span class="hl">mais controle.</span></h2>
+        <p class="lead">Volume liquidado, receita líquida, conversão de cobranças e Pix aguardando. O painel operacional Wavex no celular, de onde você estiver.</p>
+        <ol class="app-list">
+          <li><span class="n">01</span><div><h3>Visão geral da operação</h3><p>Transações, liquidação e pedidos em um só lugar, com a receita já líquida das tarifas.</p></div></li>
+          <li><span class="n">02</span><div><h3>Status em tempo real</h3><p>Cada cobrança muda de status quando o pagamento entra: aberta, aguardando Pix, paga.</p></div></li>
+          <li><span class="n">03</span><div><h3>Nova cobrança pelo app</h3><p>Gere uma cobrança no celular e acompanhe até a confirmação, sem abrir o computador.</p></div></li>
+        </ol>
+        <a class="btn btn-primary" href="#contato">Falar com um especialista <svg class="i"><use href="#i-arrow-right"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTEGRAÇÕES -->
+  <section class="section integrations" id="integracoes">
+    <div class="container">
+      <header class="section-head center" data-reveal>
+        <p class="eyebrow">Integrações</p>
+        <h2 class="h2"><span>Integre com o que</span> <span class="hl">você já usa.</span></h2>
+        <p class="lead">Conecte a Wavex à loja, à mídia e às automações da sua operação por API REST e webhooks.</p>
+      </header>
+    </div>
+    <div class="marquee marquee--logos" style="--speed:60s">
+      <div class="marquee-track">
+        <ul class="logo-list">
+          <li><span class="logo-tile"><svg class="i"><use href="#i-code"/></svg></span>API REST</li>
+          <li><span class="logo-tile"><svg class="i"><use href="#i-zap"/></svg></span>Webhooks</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/shopify.svg" alt="" width="18" height="18"></span>Shopify</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/woocommerce.svg" alt="" width="18" height="18"></span>WooCommerce</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/wordpress.svg" alt="" width="18" height="18"></span>WordPress</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/vtex.svg" alt="" width="18" height="18"></span>VTEX</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/meta.svg" alt="" width="18" height="18"></span>Meta Ads</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/googleads.svg" alt="" width="18" height="18"></span>Google Ads</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/tiktok.svg" alt="" width="18" height="18"></span>TikTok</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/whatsapp.svg" alt="" width="18" height="18"></span>WhatsApp</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/googleanalytics.svg" alt="" width="18" height="18"></span>Google Analytics</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/hubspot.svg" alt="" width="18" height="18"></span>HubSpot</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/zapier.svg" alt="" width="18" height="18"></span>Zapier</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/make.svg" alt="" width="18" height="18"></span>Make</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/n8n.svg" alt="" width="18" height="18"></span>n8n</li>
+        </ul>
+        <ul class="logo-list" aria-hidden="true">
+          <li><span class="logo-tile"><svg class="i"><use href="#i-code"/></svg></span>API REST</li>
+          <li><span class="logo-tile"><svg class="i"><use href="#i-zap"/></svg></span>Webhooks</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/shopify.svg" alt="" width="18" height="18"></span>Shopify</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/woocommerce.svg" alt="" width="18" height="18"></span>WooCommerce</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/wordpress.svg" alt="" width="18" height="18"></span>WordPress</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/vtex.svg" alt="" width="18" height="18"></span>VTEX</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/meta.svg" alt="" width="18" height="18"></span>Meta Ads</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/googleads.svg" alt="" width="18" height="18"></span>Google Ads</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/tiktok.svg" alt="" width="18" height="18"></span>TikTok</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/whatsapp.svg" alt="" width="18" height="18"></span>WhatsApp</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/googleanalytics.svg" alt="" width="18" height="18"></span>Google Analytics</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/hubspot.svg" alt="" width="18" height="18"></span>HubSpot</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/zapier.svg" alt="" width="18" height="18"></span>Zapier</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/make.svg" alt="" width="18" height="18"></span>Make</li>
+          <li><span class="logo-tile"><img src="assets/integracoes/n8n.svg" alt="" width="18" height="18"></span>n8n</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE / PILARES -->
+  <section class="section" id="sobre">
+    <div class="container about-grid">
+      <div class="about-copy" data-reveal>
+        <p class="eyebrow">Sobre a Wavex</p>
+        <h2 class="h2"><span>A diferença está no</span> <span class="hl">que existe por trás.</span></h2>
+        <p class="lead">A Wavex Payments é uma infraestrutura de pagamentos para operações digitais brasileiras. Checkout, Pix, cartão, boleto, antifraude, painel e saque na mesma base. Você cuida do crescimento. A Wavex cuida da estrutura.</p>
+        <p class="security-line"><svg class="i"><use href="#i-shield"/></svg>Segurança não é extra. É base: KYC no cadastro, antifraude e dados conforme a LGPD.</p>
+      </div>
+      <ul class="pillars" data-reveal style="--d:1">
+        <li class="pillar card"><img src="assets/pilar-integracao.webp" alt="" width="56" height="56" loading="lazy"><h3>Integração</h3><p>Checkout Wavex ou API REST com webhooks: você escolhe como conectar a operação.</p></li>
+        <li class="pillar card"><img src="assets/pilar-novidades.webp" alt="" width="56" height="56" loading="lazy"><h3>Novidades</h3><p>Produto em evolução: você acompanha cada novo recurso no Instagram oficial da Wavex.</p></li>
+        <li class="pillar card"><img src="assets/pilar-suporte.webp" alt="" width="56" height="56" loading="lazy"><h3>Suporte</h3><p>Dúvida na integração ou na operação? O time Wavex responde em canal direto.</p></li>
+        <li class="pillar card"><img src="assets/pilar-taxas.webp" alt="" width="56" height="56" loading="lazy"><h3>Taxas</h3><p>Por perfil de operação, combinadas antes de começar. O painel mostra a receita líquida.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section alt ruled" id="faq">
+    <div class="container narrow">
+      <header class="section-head center" data-reveal>
+        <p class="eyebrow">Perguntas frequentes</p>
+        <h2 class="h2"><span>Perguntas que toda</span> <span class="hl">operação faz.</span></h2>
+      </header>
+      <div class="faq-list" data-reveal>
+        <details name="faq" open><summary>Quanto tempo leva para começar a operar?<svg class="i"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>Depende do perfil da operação, da análise de risco e da documentação enviada. Com cadastro e KYC completos, a ativação tende a andar mais rápido. Um especialista Wavex informa a previsão para o seu caso.</p></div></details>
+        <details name="faq"><summary>Preciso de CNPJ para usar a Wavex?<svg class="i"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>Os documentos exigidos dependem do modelo e do volume da operação. Fale com um especialista Wavex para confirmar o que se aplica ao seu caso antes do cadastro.</p></div></details>
+        <details name="faq"><summary>Quais métodos de pagamento estão disponíveis?<svg class="i"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>Pix, cartão de crédito à vista ou parcelado e boleto, todos pela mesma integração. A liberação de cada método e as condições de parcelamento seguem a análise do perfil da operação.</p></div></details>
+        <details name="faq"><summary>Como funcionam as taxas?<svg class="i"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>As taxas variam conforme o perfil da operação, o volume e os métodos usados. Um especialista apresenta as condições para o seu caso, e o painel mostra a receita líquida, já descontadas as tarifas.</p></div></details>
+        <details name="faq"><summary>A Wavex tem API?<svg class="i"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>Sim. API REST e webhooks para criar cobranças e receber a confirmação de cada pagamento no seu sistema. Para lojas em plataformas como Shopify ou WooCommerce, um especialista indica o caminho de integração.</p></div></details>
+        <details name="faq"><summary>Como funciona o saque?<svg class="i"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>O saldo disponível sai via Pix para a conta cadastrada. Prazos de liberação e limites dependem do perfil da operação e de cada método. Um especialista detalha as regras para o seu caso.</p></div></details>
+        <details name="faq"><summary>Já uso outro gateway. Consigo migrar para a Wavex?<svg class="i"><use href="#i-plus"/></svg></summary><div class="faq-a"><p>Depende de como a operação está integrada hoje: checkout, plataforma, API e volume. Um especialista Wavex avalia o seu cenário e indica os próximos passos para a troca.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA + FORMULÁRIO -->
+  <section class="section cta" id="contato">
+    <img class="cta-art" src="assets/chevron-3d.webp" alt="" width="1080" height="810" loading="lazy">
+    <div class="container cta-grid">
+      <div class="cta-copy" data-reveal>
+        <p class="eyebrow">Escalar com a Wavex</p>
+        <h2 class="h2"><span>Grandes operações</span> <span class="hl">têm infraestrutura.</span></h2>
+        <p class="lead">Estrutura se monta antes do pico, não durante. Conte como sua operação vende hoje e o time Wavex continua a conversa no WhatsApp.</p>
+        <ol class="cta-points">
+          <li><span>01</span>Checkout e infraestrutura na mesma base</li>
+          <li><span>02</span>Pix, cartão e boleto em uma integração</li>
+          <li><span>03</span>Conversa direta com o time Wavex</li>
+        </ol>
+      </div>
+
+      <form class="lead-form card" id="lead-form" novalidate data-reveal style="--d:1">
+        <ol class="stepper" aria-label="Etapas">
+          <li class="is-active"><span>1</span>Interesse</li>
+          <li><span>2</span>Contato</li>
+          <li><span>3</span>Empresa</li>
+          <li><span>4</span>Enviar</li>
+        </ol>
+
+        <fieldset class="form-step">
+          <legend>O que você procura</legend>
+          <p class="hint">Escolha o foco da sua operação.</p>
+          <label class="opt"><input type="radio" name="interesse" value="Checkout Wavex + infraestrutura" data-label="Interesse" required checked><span>Checkout Wavex + infraestrutura</span></label>
+          <label class="opt"><input type="radio" name="interesse" value="Integração via API e webhooks"><span>Integração via API e webhooks</span></label>
+          <label class="opt"><input type="radio" name="interesse" value="Migrar minha operação para a Wavex"><span>Migrar minha operação para a Wavex</span></label>
+        </fieldset>
+
+        <fieldset class="form-step" hidden>
+          <legend>Como falamos com você</legend>
+          <p class="hint">Nome e contato do responsável.</p>
+          <label class="field"><span>Nome completo</span><input name="nome" autocomplete="name" required minlength="3" data-label="Nome"></label>
+          <label class="field"><span>E-mail</span><input name="email" type="email" autocomplete="email" required data-label="E-mail"></label>
+          <label class="field"><span>WhatsApp</span><input name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(11) 99999-9999" required pattern="[\d\s\(\)\+\-]{10,}" title="Informe DDD e número" data-label="WhatsApp"></label>
+        </fieldset>
+
+        <fieldset class="form-step" hidden>
+          <legend>Sobre a operação</legend>
+          <p class="hint">Segmento e faturamento mensal.</p>
+          <div class="field-row">
+            <label class="field"><span>Empresa</span><input name="empresa" autocomplete="organization" required data-label="Empresa"></label>
+            <label class="field"><span>Site ou Instagram</span><input name="site" placeholder="opcional" data-label="Site/Instagram"></label>
+          </div>
+          <label class="field"><span>Segmento</span>
+            <select name="segmento" required data-label="Segmento">
+              <option value="" disabled selected>Selecione</option>
+              <option>Infoprodutos</option><option>E-commerce</option><option>Nutracêuticos</option><option>Assinaturas</option><option>Dropshipping</option><option>Outro segmento</option>
+            </select>
+          </label>
+          <label class="field"><span>Faturamento mensal</span>
+            <select name="faturamento" required data-label="Faturamento mensal">
+              <option value="" disabled selected>Selecione</option>
+              <option>Até R$ 50 mil</option><option>R$ 50 mil a R$ 200 mil</option><option>R$ 200 mil a R$ 1 milhão</option><option>Acima de R$ 1 milhão</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="form-step" hidden>
+          <legend>Tudo pronto</legend>
+          <p class="hint">Revise e envie para o WhatsApp do time.</p>
+          <dl class="summary"></dl>
+        </fieldset>
+
+        <div class="form-nav">
+          <button class="link-btn" type="button" data-back hidden><svg class="i"><use href="#i-arrow-left"/></svg>Voltar</button>
+          <button class="btn btn-primary" type="button" data-next>Continuar <svg class="i"><use href="#i-arrow-right"/></svg></button>
+          <button class="btn btn-primary" type="submit" data-submit hidden><svg class="i"><use href="#i-whatsapp"/></svg>Enviar pelo WhatsApp</button>
+        </div>
+        <p class="form-done" role="status" hidden>Pronto. O WhatsApp abriu com seus dados preenchidos. Envie a mensagem e o time Wavex continua a conversa por lá. Não abriu? <a href="#" target="_blank" rel="noopener">Toque aqui</a>.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="assets/logo-wavex.png" alt="Wavex Payments" width="185" height="28" loading="lazy">
+        <p>Infraestrutura de pagamentos para operações digitais brasileiras. Pix, cartão e boleto com checkout, painel e saque na mesma base.</p>
+        <a class="footer-mail" data-link="email" href="#"><svg class="i"><use href="#i-mail"/></svg><span></span></a>
+        <ul class="socials">
+          <li><a class="icon-btn" data-link="instagram" href="#" aria-label="Instagram da Wavex"><svg class="i"><use href="#i-instagram"/></svg></a></li>
+          <li><a class="icon-btn" data-link="linkedin" href="#" aria-label="LinkedIn da Wavex"><svg class="i"><use href="#i-linkedin"/></svg></a></li>
+          <li><a class="icon-btn" data-link="youtube" href="#" aria-label="YouTube da Wavex"><svg class="i"><use href="#i-youtube"/></svg></a></li>
+        </ul>
+      </div>
+      <nav class="footer-cols" aria-label="Rodapé">
+        <div>
+          <h3 class="label">Produto</h3>
+          <ul>
+            <li><a href="#metodos" data-tab="tab-pix">Pix</a></li>
+            <li><a href="#metodos" data-tab="tab-cartao">Cartão de crédito</a></li>
+            <li><a href="#metodos" data-tab="tab-boleto">Boleto</a></li>
+            <li><a href="#checkout">Checkout e painel</a></li>
+            <li><a href="#app">App Wavex</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="label">Soluções</h3>
+          <ul>
+            <li><a href="#segmentos" data-seg="0">Infoprodutos</a></li>
+            <li><a href="#segmentos" data-seg="1">E-commerce</a></li>
+            <li><a href="#segmentos" data-seg="2">Nutracêuticos</a></li>
+            <li><a href="#segmentos" data-seg="3">Assinaturas</a></li>
+            <li><a href="#segmentos" data-seg="4">Dropshipping</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="label">Empresa</h3>
+          <ul>
+            <li><a href="#sobre">Sobre a Wavex</a></li>
+            <li><a href="#como-funciona">Como funciona</a></li>
+            <li><a href="#integracoes">Integrações</a></li>
+            <li><a href="#faq">Perguntas frequentes</a></li>
+            <li><a href="#contato">Fale conosco</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="footer-band card">
+      <div><strong>Pronto para escalar?</strong><p>Fale com um especialista e veja a Wavex na sua operação.</p></div>
+      <a class="btn btn-primary" href="#contato">Escalar com a Wavex <svg class="i"><use href="#i-arrow-right"/></svg></a>
+    </div>
+
+    <div class="trust">
+      <p class="label">Segurança e conformidade · Wavex Payments</p>
+      <ul class="trust-list">
+        <li><svg class="i"><use href="#i-shield"/></svg><strong>LGPD</strong><small>Proteção de dados</small></li>
+        <li><svg class="i"><use href="#i-lock"/></svg><strong>Criptografia</strong><small>Conexão protegida</small></li>
+        <li><svg class="i"><use href="#i-activity"/></svg><strong>Antifraude</strong><small>Análise de risco</small></li>
+        <li><svg class="i"><use href="#i-scan"/></svg><strong>KYC</strong><small>Cadastro verificado</small></li>
+      </ul>
+    </div>
+
+    <div class="footer-legal">
+      <ul class="legal-links">
+        <li><a data-link="termos" href="#">Termos de uso</a></li>
+        <li><a data-link="privacidade" href="#">Política de privacidade</a></li>
+      </ul>
+      <p data-legal hidden></p>
+      <p>© 2026 Wavex Payments. Todos os direitos reservados.</p>
+      <p class="disclaimer">A Wavex Payments oferece tecnologia de pagamentos sujeita à análise de risco e à aprovação cadastral. Métodos, condições e prazos variam conforme o perfil da operação. Marcas citadas pertencem aos seus titulares.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
