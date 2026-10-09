@@ -1,1 +1,0 @@
-- [Wavex: regras de copy](project-wavex-copy-rules.md) — sem depoimento/número inventado; números e recursos permitidos; voz e formato H2 dos criativos

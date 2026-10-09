@@ -1,5 +1,5 @@
 // Abertura no molde da Zenith: selo Wavex -> globo realista conectando o mundo até o Brasil -> boas-vindas -> site.
-// Só roda se o <head> marcou html.intro-on (1ª visita da sessão e sem "reduzir movimento").
+// Roda toda vez que a página carrega; o <head> só não marca html.intro-on com "reduzir movimento" ligado.
 // É chamada no fim do arquivo: precisa do shader (const) já definido.
 function runIntro() {
   const root = document.documentElement;
@@ -14,21 +14,21 @@ function runIntro() {
     return;
   }
   window.wxIntro = true; // avisa o onclick de reserva do botão "Pular" que o JS assumiu
-  try { sessionStorage.setItem('wx-intro', '1'); } catch (e) { /* aba privada: tudo bem repetir */ }
 
   const q = s => intro.querySelector(s);
   const page = [...document.body.children].filter(el => el !== intro && el.tagName !== 'SCRIPT');
   const timers = [];
   const at = (ms, fn) => timers.push(setTimeout(fn, ms));
-  let done = false, globe = null;
+  let done = false, globe = null, sound = { sale() {}, close() {} }; // som de verdade nasce dentro do try
 
-  // pular: botão, Esc/Enter/espaço, roda do mouse ou arrastar no celular — ninguém fica preso na abertura
-  const onKey = e => { if (['Escape', 'Enter', ' '].includes(e.key)) finish(); };
+  // pular: botão, Esc, roda do mouse ou arrastar no celular — ninguém fica preso na abertura
+  const onKey = e => { if (e.key === 'Escape') finish(); };
   function finish() {
     if (done) return;
     done = true;
     timers.forEach(clearTimeout);
     if (globe) globe.dispose();
+    setTimeout(sound.close, 900); // deixa o último ka-ching terminar
     removeEventListener('keydown', onKey);
     removeEventListener('wheel', finish);
     removeEventListener('touchmove', finish);
@@ -48,6 +48,7 @@ function runIntro() {
     page.forEach(el => { el.inert = true; });
     root.classList.add('intro-lock');
     q('.intro-skip').focus({ preventScroll: true });
+    sound = makeSound(q('.intro-sound'), intro);
 
     const caption = q('.intro-caption');
     const feed = [...intro.querySelectorAll('.feed-list li')];
@@ -66,13 +67,67 @@ function runIntro() {
       at(T.out, () => intro.classList.remove('is-globe'));                  // globo apaga; pausa escura antes da próxima cena
     }
     at(T.welcome, () => { if (globe) globe.stop(); intro.classList.add('is-welcome'); caption.innerHTML = '<span>Abertura automática</span>'; });
-    feed.forEach((li, k) => at(T.welcome + 500 + k * 480, () => li.classList.add('is-in')));
+    feed.forEach((li, k) => at(T.welcome + 500 + k * 480, () => { li.classList.add('is-in'); sound.sale(k); }));
     at(T.total, finish);
     intro.style.animation = 'none'; // o JS assumiu e já agendou o fim: desliga o failsafe de 16 s do CSS
   } catch (e) {
     console.error('[abertura]', e); // registra pra quem for depurar...
     finish();                        // ...e abre o site direto
   }
+}
+
+// Som das vendas: "ka-ching" de caixa registradora sintetizado (sem arquivo, sem licença).
+// O navegador só libera áudio depois de um clique/toque/tecla do visitante: o botão "Ativar som"
+// (ou qualquer toque na abertura) libera; quem já interagiu com o site antes pode ouvir direto.
+function makeSound(btn, area) {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const none = { sale() {}, close() {} };
+  if (!AC || !btn) { if (btn) btn.remove(); return none; }
+  let ctx;
+  try { ctx = new AC(); } catch (e) { btn.remove(); return none; }
+  let on = true; // o visitante quer som (até desligar no botão)
+  const render = () => {
+    const playing = on && ctx.state === 'running';
+    btn.setAttribute('aria-pressed', playing);
+    btn.querySelector('use').setAttribute('href', playing ? '#i-vol' : '#i-mute');
+    btn.querySelector('span').textContent = playing ? 'Som ligado' : 'Ativar som';
+  };
+  const unlock = () => ctx.resume().then(render).catch(() => {});
+  ctx.onstatechange = render;
+  unlock(); // navegador que já permite áudio libera aqui mesmo
+  area.addEventListener('pointerdown', unlock);
+  addEventListener('keydown', unlock, { once: true });
+  btn.addEventListener('click', () => {
+    if (ctx.state !== 'running') { on = true; unlock().then(() => sale(0)); return; }
+    on = !on;
+    render();
+    if (on) sale(0);
+  });
+  function sale(k = 0) {
+    if (!on || ctx.state !== 'running') return;
+    const t = ctx.currentTime + .01, out = ctx.createGain();
+    out.gain.value = .22;
+    out.connect(ctx.destination);
+    // "ka": estalo curto de ruído (a gaveta)
+    const len = Math.round(ctx.sampleRate * .05), buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    const src = ctx.createBufferSource(), bp = ctx.createBiquadFilter(), ng = ctx.createGain();
+    src.buffer = buf; bp.type = 'bandpass'; bp.frequency.value = 2500; bp.Q.value = 1.2; ng.gain.value = .5;
+    src.connect(bp).connect(ng).connect(out);
+    src.start(t);
+    // "ching": acorde agudo de sino; cada venda sai um pouco mais aguda que a anterior
+    [2093, 2637, 3136, 4186].forEach((f, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain(), s = t + .05 + i * .012;
+      o.type = 'sine'; o.frequency.value = f * (1 + k * .03);
+      g.gain.setValueAtTime(0, s);
+      g.gain.linearRampToValueAtTime(.32 - i * .05, s + .005);
+      g.gain.exponentialRampToValueAtTime(.0008, s + .7);
+      o.connect(g).connect(out);
+      o.start(s); o.stop(s + .75);
+    });
+  }
+  render();
+  return { sale, close: () => { area.removeEventListener('pointerdown', unlock); ctx.close().catch(() => {}); } };
 }
 
 // ---------------------------------------------------------------------------------------------

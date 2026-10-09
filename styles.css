@@ -756,11 +756,13 @@ ul, ol { padding: 0; list-style: none; }
 .intro-progress i { display: block; height: 100%; background: var(--violeta); transform: scaleX(0); transform-origin: left; }
 .intro.is-badge .intro-progress i { animation: grow var(--intro-ms, 12.6s) linear forwards; }
 @keyframes grow { to { transform: none; } }
-.intro-skip {
-  position: absolute; top: 20px; right: 20px; display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px;
+.intro-actions { position: absolute; top: 20px; right: 20px; display: flex; gap: 8px; }
+.intro-skip, .intro-sound {
+  display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px;
   border: 1px solid var(--line-2); border-radius: 999px; background: rgba(7, 7, 7, .5); color: var(--muted); font-size: .8rem; cursor: pointer;
 }
-.intro-skip:hover { color: var(--text); background: rgba(248, 250, 252, .06); }
+.intro-skip:hover, .intro-sound:hover { color: var(--text); background: rgba(248, 250, 252, .06); }
+.intro-sound[aria-pressed="true"] { border-color: rgba(143, 99, 254, .6); background: rgba(143, 99, 254, .16); color: #e3d8ff; }
 
 /* ---------- hero: cartões flutuantes (como os da Zenith) ---------- */
 .hero-float { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
