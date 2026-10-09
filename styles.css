@@ -367,12 +367,6 @@ ul, ol { padding: 0; list-style: none; }
 .pay-amount { margin-top: 16px; font: 800 1.9rem/1 var(--display); font-stretch: 112%; letter-spacing: -.03em; }
 .pay-amount small { display: block; margin-bottom: 6px; color: var(--dim); font: 500 .75rem var(--body); letter-spacing: 0; }
 .pay-qr { width: 156px; margin: 16px auto 0; padding: 8px; border-radius: 14px; background: #F8FAFC; }
-.pay-copy {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding: 10px 12px;
-  border: 1px solid var(--line-2); border-radius: 10px; color: var(--muted); font-size: .75rem;
-}
-.pay-copy span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pay-copy .i { color: var(--violeta); }
 .pay-foot { display: flex; align-items: center; gap: 8px; margin-top: 12px; color: var(--dim); font-size: .75rem; }
 .pay-field { margin-top: 12px; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: 10px; }
 .pay-field small { display: block; color: var(--dim); font-size: .7rem; }
@@ -670,6 +664,8 @@ ul, ol { padding: 0; list-style: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .js [data-reveal] { opacity: 1; transform: none; }
+  .swap > * { animation-name: none; }   /* sem animação, mostra só o primeiro selo */
+  .swap > :last-child { opacity: 0; }
   .marquee { -webkit-mask: none; mask: none; }
   .marquee-track { width: auto; animation: none; }
   .marquee-track > ul { flex: 1; flex-wrap: wrap; justify-content: center; }

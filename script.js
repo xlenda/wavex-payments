@@ -48,6 +48,8 @@ const setMenu = open => {
   document.body.classList.toggle('nav-open', open);
 };
 menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+// girou o tablet / alargou a janela com o menu aberto: o botão some, então fecha o menu (senão a página fica travada)
+matchMedia('(min-width: 960px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
 
 // submenus (desktop abre no hover pelo CSS; clique/teclado pelo aria-expanded)
 const subBtns = $$('.nav-link[aria-controls]');
@@ -187,6 +189,7 @@ if (stepsSec) {
     steps.forEach((s, k) => s.classList.toggle('is-active', k === n));
     panels.forEach((p, k) => { p.hidden = k !== n; });
     tabs.forEach((t, k) => { t.classList.toggle('is-active', k <= n); t.setAttribute('aria-current', k === n); });
+    if (!pinned.matches) bar.style.transform = `scaleX(${(n + 1) / steps.length})`; // sem fixar, a barra mostra a etapa clicada
   };
   const progress = () => {
     const r = stepsSec.getBoundingClientRect();
@@ -194,18 +197,19 @@ if (stepsSec) {
   };
   const update = () => {
     queued = false;
-    if (!pinned.matches) { bar.style.transform = ''; return set(0); }
+    if (!pinned.matches) return; // sem fixar (tela baixa/estreita), a etapa só muda pelo clique nas abas
     const p = progress();
     set(Math.floor(p * steps.length));
     bar.style.transform = `scaleX(${Math.max(p, .02)})`;
   };
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
-  pinned.addEventListener('change', update);
+  pinned.addEventListener('change', () => { cur = -1; set(0); update(); });
   tabs.forEach((t, k) => t.addEventListener('click', () => {
     if (!pinned.matches) return set(k);
     const r = stepsSec.getBoundingClientRect();
     scrollTo({ top: scrollY + r.top + (r.height - innerHeight) * (k + .5) / steps.length, behavior: reduce ? 'auto' : 'smooth' });
   }));
+  set(0);
   update();
 }
 
@@ -226,6 +230,7 @@ if (form) {
   };
   const go = n => {
     i = n;
+    done.hidden = true; // voltou pra editar: o aviso de "enviado" ficaria com a mensagem antiga
     steps.forEach((s, k) => { s.hidden = k !== i; });
     marks.forEach((m, k) => { m.classList.toggle('is-active', k === i); m.classList.toggle('is-done', k < i); });
     back.hidden = i === 0; next.hidden = i === last; submit.hidden = i !== last;
@@ -239,8 +244,11 @@ if (form) {
     const first = $('input, select', steps[i]);
     if (first && n > 0) first.focus({ preventScroll: true });
   };
-  // valida só os campos da etapa visível (o resto está escondido)
-  const valid = () => $$('input, select', steps[i]).every(f => f.reportValidity());
+  // valida só os campos da etapa visível; tira espaços antes, senão "   " passa no required e some da mensagem
+  const valid = () => $$('input, select', steps[i]).every(f => {
+    if (f.tagName === 'INPUT' && f.type !== 'radio') f.value = f.value.trim();
+    return f.reportValidity();
+  });
 
   next.addEventListener('click', () => { if (valid()) go(i + 1); });
   back.addEventListener('click', () => go(i - 1));
