@@ -18,6 +18,14 @@ document.documentElement.classList.add('js');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+// com a abertura na tela, as animações do topo esperam ela acabar (no máximo 16 s, caso o intro.js nem rode)
+const afterIntro = fn => {
+  if (!document.documentElement.classList.contains('intro-on')) return fn();
+  let ran = false;
+  const run = () => { if (!ran) { ran = true; fn(); } };
+  document.addEventListener('wx:intro-done', run, { once: true });
+  setTimeout(run, 16000);
+};
 
 // ----- links configuráveis -----
 $$('[data-link]').forEach(a => {
@@ -87,7 +95,7 @@ if (rotator) {
   };
   const play = () => { if (!reduce) timer = setInterval(() => show(i + 1), 3400); };
   dots.forEach((d, k) => d.addEventListener('click', () => { clearInterval(timer); show(k); play(); }));
-  play();
+  afterIntro(play);
 }
 
 // ----- hero: partículas violeta -----
@@ -120,11 +128,11 @@ if (canvas && !reduce) {
   resize();
   parts = Array.from({ length: Math.min(110, Math.round(w * h / 12000)) }, () => spawn());
   addEventListener('resize', resize, { passive: true });
-  // só anima com o hero na tela
-  new IntersectionObserver(([e]) => {
+  // só anima com o hero na tela (e sem a abertura por cima)
+  afterIntro(() => new IntersectionObserver(([e]) => {
     running = e.isIntersecting;
     if (running && !raf) tick();
-  }).observe(canvas);
+  }).observe(canvas));
 }
 
 // ----- entrada suave ao rolar -----
@@ -133,7 +141,7 @@ const revealer = new IntersectionObserver(entries => entries.forEach(e => {
   e.target.classList.add('is-in');
   revealer.unobserve(e.target);
 }), { rootMargin: '0px 0px -8% 0px' });
-$$('[data-reveal]').forEach(el => revealer.observe(el));
+afterIntro(() => $$('[data-reveal]').forEach(el => revealer.observe(el)));
 
 // ----- para quem é: carrossel de segmentos -----
 const seg = $('[data-segments]');
