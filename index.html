@@ -87,18 +87,26 @@
     <div class="badge"><svg class="badge-mark"><use href="#i-wavex"/></svg><i class="badge-sheen"></i></div>
   </div>
   <div class="intro-scene scene-globe" aria-hidden="true">
-    <div class="globe-wrap">
-      <canvas class="globe-canvas"></canvas>
-      <div class="globe-tags">
-        <div class="gtag" data-lat="-23.55" data-lng="-46.63"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#32BCAD"><use href="#i-pix"/></svg></span><span class="gtag-txt">São Paulo<small>PIX</small></span></div></div>
-        <div class="gtag" data-lat="-15.79" data-lng="-47.88"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 24 24" style="color:#1A1F71"><use href="#b-visa"/></svg></span></div></div>
-        <div class="gtag" data-lat="-12.97" data-lng="-38.5"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#111"><use href="#i-barcode"/></svg></span></div></div>
-        <div class="gtag" data-lat="-8.05" data-lng="-34.88"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 48 30"><use href="#b-mastercard"/></svg></span><span class="gtag-txt">Recife<small>MASTERCARD</small></span></div></div>
-        <div class="gtag" data-lat="-1.46" data-lng="-48.49"><div class="gtag-in"><span class="gtag-tile"><span class="tw" style="color:#111">elo</span></span></div></div>
-        <div class="gtag" data-lat="-3.12" data-lng="-60.02"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#32BCAD"><use href="#i-pix"/></svg></span><span class="gtag-txt">Manaus<small>PIX</small></span></div></div>
-        <div class="gtag" data-lat="-15.6" data-lng="-56.1"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#2E77BC"><use href="#b-americanexpress"/></svg></span></div></div>
-        <div class="gtag" data-lat="-30.03" data-lng="-51.23"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#820AD1"><use href="#b-nubank"/></svg></span><span class="gtag-txt">Porto Alegre<small>PIX</small></span></div></div>
-      </div>
+    <canvas class="globe-gl"></canvas>
+    <canvas class="globe-fx"></canvas>
+    <div class="globe-tags">
+      <div class="gtag" data-lat="-23.55" data-lng="-46.63"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#32BCAD"><use href="#i-pix"/></svg></span><span class="gtag-txt">São Paulo<small>PIX</small></span></div></div>
+      <div class="gtag" data-lat="35.68" data-lng="139.69"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 24 24" style="color:#1A1F71"><use href="#b-visa"/></svg></span><span class="gtag-txt">Tóquio<small>VISA</small></span></div></div>
+      <div class="gtag" data-lat="-33.87" data-lng="151.21"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 48 30"><use href="#b-mastercard"/></svg></span></div></div>
+      <div class="gtag" data-lat="1.35" data-lng="103.82"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#2E77BC"><use href="#b-americanexpress"/></svg></span></div></div>
+      <div class="gtag" data-lat="19.08" data-lng="72.88"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 24 24" style="color:#1A1F71"><use href="#b-visa"/></svg></span><span class="gtag-txt">Mumbai<small>VISA</small></span></div></div>
+      <div class="gtag" data-lat="25.2" data-lng="55.27"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 48 30"><use href="#b-mastercard"/></svg></span></div></div>
+      <div class="gtag" data-lat="-26.2" data-lng="28.05"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 24 24" style="color:#1A1F71"><use href="#b-visa"/></svg></span></div></div>
+      <div class="gtag" data-lat="6.52" data-lng="3.38"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 48 30"><use href="#b-mastercard"/></svg></span></div></div>
+      <div class="gtag" data-lat="51.51" data-lng="-0.13"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 24 24" style="color:#1A1F71"><use href="#b-visa"/></svg></span><span class="gtag-txt">Londres<small>VISA</small></span></div></div>
+      <div class="gtag" data-lat="38.72" data-lng="-9.14"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 48 30"><use href="#b-mastercard"/></svg></span></div></div>
+      <div class="gtag" data-lat="40.71" data-lng="-74.01"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#2E77BC"><use href="#b-americanexpress"/></svg></span><span class="gtag-txt">Nova York<small>AMEX</small></span></div></div>
+      <div class="gtag" data-lat="25.76" data-lng="-80.19"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 24 24" style="color:#1A1F71"><use href="#b-visa"/></svg></span></div></div>
+      <div class="gtag" data-lat="19.43" data-lng="-99.13"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 48 30"><use href="#b-mastercard"/></svg></span><span class="gtag-txt">Cidade do México<small>MASTERCARD</small></span></div></div>
+      <div class="gtag" data-lat="-34.6" data-lng="-58.38"><div class="gtag-in"><span class="gtag-tile"><svg class="wide" viewBox="0 0 24 24" style="color:#1A1F71"><use href="#b-visa"/></svg></span></div></div>
+      <div class="gtag" data-lat="-8.05" data-lng="-34.88"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#32BCAD"><use href="#i-pix"/></svg></span></div></div>
+      <div class="gtag" data-lat="-3.12" data-lng="-60.02"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#32BCAD"><use href="#i-pix"/></svg></span></div></div>
+      <div class="gtag" data-lat="-15.79" data-lng="-47.88"><div class="gtag-in"><span class="gtag-tile"><svg viewBox="0 0 24 24" style="color:#111"><use href="#i-barcode"/></svg></span></div></div>
     </div>
   </div>
   <div class="intro-scene scene-welcome" aria-hidden="true">
